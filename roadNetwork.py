@@ -427,11 +427,17 @@ class RoadNetwork(object):
 		print "Create road network"
 		self.roads = list()
 		self.intersections = list()
-		self.forks = list()
-		self.merges = list()
+		# self.forks = list()
+		# self.merges = list()
 		# Records the next possible elements
 		self.map = dict()
 		# Records the previous possible elements
+		self.reverseMap = dict()
+
+	def clear(self):
+		self.roads = list()
+		self.intersections = list()
+		self.map = dict()
 		self.reverseMap = dict()
 
 	def link(self, previous, next):
