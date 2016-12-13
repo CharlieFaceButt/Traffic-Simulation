@@ -1,5 +1,6 @@
 import Tkinter
 import math
+from random import *
 
 class RNLocation(object):
 
@@ -229,6 +230,42 @@ class RNLane(RNElement):
 	# Exit of the lane is the exit of its last tile
 	def get_exit(self):
 		return self.tiles[-1].get_exit()
+
+	def get_preenter_location(self, position):
+		if position < 0 or position > self.l:
+			return None
+
+		length = position
+		for tile in self.tiles:
+			if length <= tile.l:
+				gate = tile.get_entry()
+				# Parellel position but outside the lane
+				x = gate.x + length * math.cos(tile.direction) + tile.w * math.cos(tile.direction - math.pi/2)
+				y = gate.y + length * math.sin(tile.direction) + tile.w * math.sin(tile.direction - math.pi/2)
+				z = gate.z + length * tile.slope
+				return RNLocation(x, y, z)
+			else:
+				length = length - tile.l
+
+		return None
+
+	def get_location(self, position):
+		if position < 0 or position > self.l:
+			return None
+
+		length = position
+		for tile in self.tiles:
+			if length <= tile.l:
+				gate = tile.get_entry()
+				# Parellel position but outside the lane
+				x = gate.x + length * math.cos(tile.direction)
+				y = gate.y + length * math.sin(tile.direction)
+				z = gate.z + length * tile.slope
+				return RNLocation(x, y, z)
+			else:
+				length = length - tile.l
+
+		return None
 
 
 # Road representation, consists of parallel lanes, these lanes
@@ -589,8 +626,13 @@ class RoadNetwork(object):
 		self.roads.append(newRoad)
 		return (newRoad, newIntersections, oldIntersections)
 
-	def get_random_entering_point(self):
-		pass		
+	def random_position_on_road(self, road = None):
+		if road == None:
+			road = self.roads[randint(0, len(self.roads) - 1)]
+		lane = road.lanes[-1]
+		position = random() * lane.l
+		return (road, lane, position)
+
 
 
 # class RNCross(RNIntersection):
